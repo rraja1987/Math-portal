@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Mathematics Lecture Portal</title>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #020617;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --success: #22c55e;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 3fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            color: var(--accent);
+            margin-top: 0;
+            font-size: 26px;
+            text-align: center;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        @media (min-width: 640px) {
+            .controls {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .select-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        select {
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-section {
+            background-color: var(--bg-input);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar-container {
+            background-color: #334155;
+            border-radius: 9999px;
+            height: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar-fill {
+            background-color: var(--success);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .video-box {
+            display: none;
+            background-color: var(--bg-input);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .video-meta {
+            text-align: left;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .badge {
+            background-color: var(--accent);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .lecture-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .action-bar {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            color: #000;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .log-box {
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: var(--bg-input);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid #1e293b;
+            color: var(--text-muted);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        option.watched-opt {
+            color: #4ade80 !important;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layout-grid">
+    <main class="card">
+        <h1>📐 Advanced Mathematics Lecture Portal</h1>
+        
+        <div class="progress-section">
+            <div class="progress-stats">
+                <span id="progressText">Total Progress: 0/142 Videos (0%)</span>
+                <span id="levelProgressText">Level Progress: --</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="select-group">
+                <label for="levelSelect">1. Choose Structure Level</label>
+                <select id="levelSelect">
+                    <option value="">-- Select a Level --</option>
+                </select>
+            </div>
+            <div class="select-group">
+                <label for="lectureSelect">2. Choose Lecture Module</label>
+                <select id="lectureSelect" disabled>
+                    <option value="">-- Select a Lecture --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="video-box" id="videoBox">
+            <div class="video-meta">
+                <div>
+                    <span class="badge" id="metaTopic">Topic</span>
+                    <div class="lecture-title" id="metaTitle">Lecture Title</div>
+                </div>
+            </div>
+            <video id="mainPlayer" controls controlsList="nodownload"></video>
+            <div class="action-bar">
+                <button class="btn-success" id="btnWatched">✓ Toggle Watched Status</button>
+            </div>
+        </div>
+    </main>
+
+    <aside class="sidebar">
+        <div class="card">
+            <h3>📝 Session Log Book</h3>
+            <div class="log-box" id="logBox">
+                <div class="log-entry">No activities recorded in this session yet.</div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<script>
+const lectureData = [
+    { level: "Level 1", topic: "Topic 1: Level I Introduction", title: "Lec 1: Level I Introduction", id: "16n49g0GGAx95g1-zJrh6h4NBCu0Z4uRs" },
+    { level: "Level 1", topic: "Topic 2: Puzzle Maths: Loop the Loop", title: "Lec 2: Puzzle Maths: Loop the Loop", id: "1vIyGH9fMTZ0yk8XICIH7RMgEiuHcKeqa" },
+    { level: "Level 1", topic: "Topic 2: Puzzle Maths: Loop the Loop", title: "Lec 3: Puzzle Maths: Spokes", id: "13-raXsrXyd7YQ1-lWFwVaxF0F3_sc3SB" },
+    { level: "Level 1", topic: "Topic 2: Puzzle Maths: Loop the Loop", title: "Lec 4: Puzzle Maths: Kakuro", id: "1SH5txS9ttLbeYMe1WsYcJwSkyyiadMM8" },
+    { level: "Level 1", topic: "Topic 2: Puzzle Maths: Loop the Loop", title: "Lec 5: Puzzle Maths: Nanogram", id: "1P_mjwxqYOSCWMMjSfKp4aGRGa78tr_j1" },
+    { level: "Level 1", topic: "Topic 3: Calendar Maths", title: "Lec 6: Calendar Maths-Lecture 1", id: "1KZI-pWiSIImaNSJfdNam2vB1EyFCCrSk" },
+    { level: "Level 1", topic: "Topic 3: Calendar Maths", title: "Lec 7: Calendar Maths-Lecture 2", id: "1BbyGesCThkcwBVN8qx2NZu_X6LSGy2n_" },
+    { level: "Level 1", topic: "Topic 3: Calendar Maths", title: "Lec 8: Calendar Maths-Lecture 3", id: "10oDQ4L3j04wnV6i16J4g9NlNQMLN044h" },
+    { level: "Level 1", topic: "Topic 4: Odd and Even", title: "Lec 9: Odd and Even- Lecture 1", id: "1pu2VwVfD_ifc3tQ5XYEV9ftC6upPKC0N" },
+    { level: "Level 1", topic: "Topic 4: Odd and Even", title: "Lec 10: Odd and Even- Lecture 2", id: "1Y4ntfzYzLcV26ZK5viO4HXxSyiVfyvFo" },
+    { level: "Level 1", topic: "Topic 5: Tuning Technique", title: "Lec 11: Tuning Technique-Lecture 1", id: "1ryLqbl-4su3pw8Q-evfbTo4Ias8Aqp8X" },
+    { level: "Level 1", topic: "Topic 5: Tuning Technique", title: "Lec 12: Tuning Technique- Lecture 2", id: "179jMXoqp7qFam2eGmI3Hp82khVn_h-mk" },
+    { level: "Level 1", topic: "Topic 6: Number Trip Game", title: "Lec 13: Number Trip Game-Lecture 1", id: "12QpJyAL7_uCPxvw_A2f-KNgvqBn4pNw2" },
+    { level: "Level 1", topic: "Topic 6: Number Trip Game", title: "Lec 14: Number Trip Game-Lecture 2", id: "1-HSJexwRG5CGIhR4t5CgOdVT0xpjPWqd" },
+    { level: "Level 1", topic: "Topic 6: Number Trip Game", title: "Lec 15: Number Trip Game-Lecture 3", id: "1p-rrfGFSy30A_CU2yJnuTU6F87lzD_rG" },
+    { level: "Level 1", topic: "Topic 7: Doing & Undoing", title: "Lec 16: Doing & Undoing-Lecture 1", id: "1Tv8tS_L4Gevs3dRxQGYg-AqNWig7QLxY" },
+    { level: "Level 1", topic: "Topic 7: Doing & Undoing", title: "Lec 17: Doing & Undoing-Lecture 2", id: "1G45DjIauYidkZ0qXe-4K_ZZKfjjKhBxk" },
+    { level: "Level 1", topic: "Topic 8: Visual Maths", title: "Lec 18: Visual Maths-Lecture 1", id: "1G1gSOfMt7x3Dctzv3SSIzJgqCMGFwfLp" },
+    { level: "Level 1", topic: "Topic 8: Visual Maths", title: "Lec 19: Visual Maths-Lecture 2", id: "1pZQ1MtZmZgPOip898t9QeilsoKldM-zM" },
+    { level: "Level 1", topic: "Topic 8: Visual Maths", title: "Lec 20: Visual Maths-Lecture 3", id: "12kRkICQDGc9HryO0-w5NtGxw5fyUAzIu" },
+    { level: "Level 1", topic: "Topic 9: Who am I?", title: "Lec 21: Who am I? -Lecture 1", id: "1jBnDdebnAiB9W3uOiBObV2LOngjY8PzT" },
+    { level: "Level 1", topic: "Topic 9: Who am I?", title: "Lec 22: Who am I? -Lecture 2", id: "1ZaFi9fRY01et5MY4GZVkn1CfjoPcAwgg" },
+    { level: "Level 1", topic: "Topic 10: Divisibility Blocks", title: "Lec 23: Divisibility Blocks-Lecture 1", id: "1yYPMIQYeGv7jpKpVT-OSsSXSDSuAMR_M" },
+    { level: "Level 1", topic: "Topic 10: Divisibility Blocks", title: "Lec 24: Divisibility Blocks-Lecture 2", id: "1D75vZNbCX18z2jIDXkRw-ruzf60RrVUb" },
+    { level: "Level 1", topic: "Topic 11: Missing Digits", title: "Lec 25: Missing Digits-Lecture 1", id: "1zgC569BYTEYx2sfGyIu2WZVVGoU5qNi3" },
+    { level: "Level 1", topic: "Topic 11: Missing Digits", title: "Lec 26: Missing Digits-Lecture 2", id: "1LF8Cf_sPSbnATBkYeFY2D-3qbatlHieB" },
+    { level: "Level 1", topic: "Topic 12: Follow the Sequence", title: "Lec 27: Follow the Sequence-Lecture 1", id: "1vcpOlhn8IH1XUM0AI3oTLmWbOiEJZ_-z" },
+    { level: "Level 1", topic: "Topic 12: Follow the Sequence", title: "Lec 28: Follow the Sequence-Lecture 2", id: "1FyDC41v-eEveZKXH4MS2Wna2iIT_FCQK" },
+    { level: "Level 1", topic: "Topic 12: Follow the Sequence", title: "Lec 29: Follow the Sequence-Lecture 3", id: "1Gzy5ZiLTg_vs5_4zq-R4iefzd56fq30N" },
+    { level: "Level 1", topic: "Topic 13: Mask Math", title: "Lec 30: Mask Math-Lecture 1", id: "1z0mXy0yb2vvdWCKHv3oskQTnIbcnS7Yp" },
+    { level: "Level 1", topic: "Topic 13: Mask Math", title: "Lec 31: Mask Math-Lecture 2", id: "1c_mBJh2XWsz1JnDGEYPD3OsKGSJ7dyCr" },
+    { level: "Level 1", topic: "Topic 14: Cow Grass Theory", title: "Lec 32: Cow Grass Theory", id: "1wDMzqKtR9x2vyZWTZciQB5roNIXTk34R" },
+    { level: "Level 2", topic: "Topic 15: Level 2 Introduction", title: "Lec 33: Level 2 Introduction", id: "1emymIwd5TV9TePXfMInerrbxrY097g2e" },
+    { level: "Level 2", topic: "Topic 16: Passenger & Compartment", title: "Lec 34: Passenger & Compartment-Lecture 1", id: "1EbqlfDipozY-D7X5XhaHhmnWdWOnd0-q" },
+    { level: "Level 2", topic: "Topic 16: Passenger & Compartment", title: "Lec 35: Passenger & Compartment-Lecture 2", id: "1zOEP-Wh5Dx57XyCRYge71wV2DwvJL-mU" },
+    { level: "Level 2", topic: "Topic 17: Soccer Score Table", title: "Lec 36: Soccer Score Table-Lecture 1", id: "1_GiRXJd-eyzEq6woLOFnY1S5kZU6Ca71" },
+    { level: "Level 2", topic: "Topic 17: Soccer Score Table", title: "Lec 37: Soccer Score Table-Lecture 2", id: "1HMj2u5SVNqRAeQmugK93t29hw0WQF2pE" },
+    { level: "Level 2", topic: "Topic 18: Frog Jumping Theory", title: "Lec 38: Frog Jumping Theory-Lecture 1", id: "1Bxn2lBXru12rDRZYv1ApdgjDTNirWFKf" },
+    { level: "Level 2", topic: "Topic 18: Frog Jumping Theory", title: "Lec 39: Frog Jumping Theory-Lecture 2", id: "1P5c6Wk9vpNWQFHDJ40hFhGomiaE7gKT5" },
+    { level: "Level 2", topic: "Topic 19: Basic Counting", title: "Lec 40: Basic Counting-Lecture 1", id: "15Lv62Ms4KyUewkkj4f8oOT5ReoXaD657" },
+    { level: "Level 2", topic: "Topic 19: Basic Counting", title: "Lec 41: Basic Counting-Lecture 2", id: "1egef5yZsCOqEI506GFH-ANCvdURk65MX" },
+    { level: "Level 2", topic: "Topic 20: Story Math", title: "Lec 42: Story Math-Lecture 1", id: "11-FQOxl1JPvJmgDIptKrFV0L6trurxQT" },
+    { level: "Level 2", topic: "Topic 20: Story Math", title: "Lec 43: Story Math-Lecture 2", id: "1t0pPEtJj-iF6k4PmygrDl7v6rr_9ZrGz" },
+    { level: "Level 2", topic: "Topic 21: Tabulation with Proper Header", title: "Lec 44: Tabulation with Proper Header-Lecture 1", id: "1ib1fbxQ2ZytZ6pQj4umQnX4MDKLQqr3G" },
+    { level: "Level 2", topic: "Topic 21: Tabulation with Proper Header", title: "Lec 45: Tabulation with Proper Header-Lecture 2", id: "12HLsPlck0i84_s4FWBd7tjwaZIu43ZyA" },
+    { level: "Level 2", topic: "Topic 22: Cows and Bulls", title: "Lec 46: Cows and Bulls-Lecture 1", id: "1kF_P_7yK96X1R0EE1LW6WyrE6Tei3LMd" },
+    { level: "Level 2", topic: "Topic 22: Cows and Bulls", title: "Lec 47: Cows and Bulls-Lecture 2", id: "1ZBR7nZt0cF7sqT9VWPF-IQgyV6c0LeLL" },
+    { level: "Level 2", topic: "Topic 23: Dissection of Polygons", title: "Lec 48: Dissection of Polygons-Lecture 1", id: "1tWubtEpoVoE76qDpU9gUx-SA4iQ73-o4" },
+    { level: "Level 2", topic: "Topic 23: Dissection of Polygons", title: "Lec 49: Dissection of Polygons-Lecture 2", id: "17V3onvnhs-RFlbpj4_xsq5nrrezZCldO" },
+    { level: "Level 2", topic: "Topic 24: Sports Algebra", title: "Lec 50: Sports Algebra-Lecture 1", id: "1h00Kr8_GwdFdDCNwLbRjUE_VxjKX5IpY" },
+    { level: "Level 2", topic: "Topic 24: Sports Algebra", title: "Lec 51: Sports Algebra-Lecture 2", id: "1G4FLcO_vwiORmgYPJdUgHooxvyH4MYtF" },
+    { level: "Level 2", topic: "Topic 25: Post Box Algebra", title: "Lec 52: Post Box Algebra-Lecture 1", id: "1NRpgi7zmeTaIcJxg4ftVNYQEY2HdkCOo" },
+    { level: "Level 2", topic: "Topic 25: Post Box Algebra", title: "Lec 53: Post Box Algebra-Lecture 2", id: "1B92Ydr53UJeLrzqboWLiKtHoe32O6TSr" },
+    { level: "Level 2", topic: "Topic 26: Basic Geometry", title: "Lec 54: Basic Geometry-Lecture 1", id: "1o3cqDuJayf8LzsBRhDJNwidh8iPAau2D" },
+    { level: "Level 2", topic: "Topic 26: Basic Geometry", title: "Lec 55: Basic Geometry-Lecture 2", id: "1mXAdoHckSvoF1IA-7oDVki2Q1otoq5Hz" },
+    { level: "Level 2", topic: "Topic 26: Basic Geometry", title: "Lec 56: Basic Geometry-Lecture 3", id: "12DvnlQI-PHPStqVtPpJFmh_k1W_6Cphz" },
+    { level: "Level 2", topic: "Topic 27: Ruled Notebook & Percentage", title: "Lec 57: Ruled Notebook & Percentage", id: "1cbkMJsn6rVb_kurvI3xPz7FS_G23hsTr" },
+    { level: "Level 2", topic: "Topic 28: Area and Perimeter", title: "Lec 58: Area and Perimeter", id: "1rNqEVJkpOfSpLilQjCFr7IAH3DUj_JV1" },
+    { level: "Level 3", topic: "Topic 29: Level 3 Introduction", title: "Lec 59: Level 3 Introduction", id: "1Yc-Tszsbm1XU8QQfv4bf_bP1cHRgTMGc" },
+    { level: "Level 3", topic: "Topic 30: Factors and Multiples", title: "Lec 60: Factors and Multiples-Lecture 1", id: "1pJvepahbu2-n1v-thlGDLsLEJDTmw04O" },
+    { level: "Level 3", topic: "Topic 30: Factors and Multiples", title: "Lec 61: Factors and Multiples-Lecture 2", id: "1alC1E1yt9h1J7jCAeUWF33jXyWO1wsoo" },
+    { level: "Level 3", topic: "Topic 30: Factors and Multiples", title: "Lec 62: Factors and Multiples-Lecture 3", id: "1VPpzUsUhi5AaSGOcMrw417FZWDD4UxU4" },
+    { level: "Level 3", topic: "Topic 31: Number Builder", title: "Lec 63: Number Builder-Lecture 1", id: "1MNNBy_uoysCdoVQ37X913vwCPkqTsPgZ" },
+    { level: "Level 3", topic: "Topic 31: Number Builder", title: "Lec 64: Number Builder-Lecture 2", id: "1lAPkMrIFhZ7cUL-4BbO55DzsdtfxBgzq" },
+    { level: "Level 3", topic: "Topic 32: Configuration", title: "Lec 65: Configuration-Lecture 1", id: "1msA8X83VxU--G1_yx_PIjwSRZHcDmnmV" },
+    { level: "Level 3", topic: "Topic 32: Configuration", title: "Lec 66: Configuration-Lecture 2", id: "14pxOGhoVgETEywFqbTFzj28hgZhRWDIT" },
+    { level: "Level 3", topic: "Topic 33: No Change", title: "Lec 67: No Change-Lecture 1", id: "1JBotssm5B4FFEK_zJ4HMm6kd6dgSUkf4" },
+    { level: "Level 3", topic: "Topic 33: No Change", title: "Lec 68: No Change-Lecture 2", id: "10ygwjeNrIl0Y9XL9dmnWo-SEM1N5oIEN" },
+    { level: "Level 3", topic: "Topic 34: Grid Maths", title: "Lec 69: Grid Maths-Lecture 1", id: "1UFG_GWgIzike7jFCaBecKgJt9DYWW-D_" },
+    { level: "Level 3", topic: "Topic 34: Grid Maths", title: "Lec 70: Grid Maths-Lecture 2", id: "1xQFq7LRxvAapzHvbrEuDuZO2taA7yjNm" },
+    { level: "Level 3", topic: "Topic 35: Shaping up Geometry", title: "Lec 71: Shaping up Geometry-Lecture 1", id: "1id4zk9EAV__wIp2F13bKfAqJadkA3RMf" },
+    { level: "Level 3", topic: "Topic 35: Shaping up Geometry", title: "Lec 72: Shaping up Geometry-Lecture 2", id: "19gm37GrhAPuwCKd-DbSVb-f_qME0Is0i" },
+    { level: "Level 3", topic: "Topic 36: Balancing Weights", title: "Lec 73: Balancing Weights-Lecture 1", id: "1MyWMFpK8luTTbHkFLYniox_h6MEWwQkw" },
+    { level: "Level 3", topic: "Topic 36: Balancing Weights", title: "Lec 74: Balancing Weights-Lecture 2", id: "1zczpkzkBNoOD83P3HzrQSaRMgfqP0HsS" },
+    { level: "Level 3", topic: "Topic 37: Geometric Estimation", title: "Lec 75: Geometric Estimation-Lecture 1", id: "1qWbcI_1HfZzZoSIqMEnh-BXC3EkogJ28" },
+    { level: "Level 3", topic: "Topic 37: Geometric Estimation", title: "Lec 76: Geometric Estimation-Lecture 2", id: "1ExORenT1UBXgeteYKoRfR77dzMMPLG2S" },
+    { level: "Level 3", topic: "Topic 38: Symmetry", title: "Lec 77: Symmetry-Lecture 1", id: "1kd9aPvJwLRk81FMNd9T9R5X2uaSs6_48" },
+    { level: "Level 3", topic: "Topic 38: Symmetry", title: "Lec 78: Symmetry-Lecture 2", id: "1JoruIZQTKpJ9vU70JEedlimJppXTQ5a5" },
+    { level: "Level 3", topic: "Topic 39: Where is my friend x?", title: "Lec 79: Where is my friend x? -Lecture 1", id: "1-UtWHU_91xNaSj4bjRqAhoupoP6eAuFt" },
+    { level: "Level 3", topic: "Topic 39: Where is my friend x?", title: "Lec 80: Where is my friend x? -Lecture 2", id: "1j8dYLpOGZLtCKV34qrgX48MkxkL5RpD9" },
+    { level: "Level 3", topic: "Topic 40: Number Games", title: "Lec 81: Number Games-Lecture 1", id: "1uJNOfemMDS-KYEl_dS13bb3DOPDDSXsW" },
+    { level: "Level 3", topic: "Topic 40: Number Games", title: "Lec 82: Number Games-Lecture 2", id: "1WJC3jyeoxCdO_bVQYK12dDXUMJgUc0lM" },
+    { level: "Level 3", topic: "Topic 41: Special Equations", title: "Lec 83: Special Equations-Lecture 1", id: "1Xyu-Mvpk50ACv1B4bLgXUK4Cs_59Z3O9" },
+    { level: "Level 3", topic: "Topic 41: Special Equations", title: "Lec 84: Special Equations-Lecture 2", id: "1LWxjk0PcWy4awZ7Iuuf2xCqkWbqXcd_2" },
+    { level: "Level 3", topic: "Topic 42: Ratios and Proportions", title: "Lec 85: Ratios and Proportions-Lecture 1", id: "1HgRVsm7ERb5qusWQ7oVZ0Q4uivhg1nzM" },
+    { level: "Level 3", topic: "Topic 42: Ratios and Proportions", title: "Lec 86: Ratios and Proportions-Lecture 2", id: "1_sZm1p7WtrFNkrkaSprP2F1wyhPXlAbN" },
+    { level: "Level 3", topic: "Topic 43: Congruency and Similarity", title: "Lec 87: Congruency and Similarity-Lecture 1", id: "1-PbUBg0JkrOlEnM4A7ceR7YpUR8z_s1F" },
+    { level: "Level 3", topic: "Topic 43: Congruency and Similarity", title: "Lec 88: Congruency and Similarity-Lecture 2", id: "1uXQR6VnJMYPVw5wN2D9h0StcJwpnVGv-" },
+    { level: "Level 3", topic: "Topic 44: Counting", title: "Lec 89: Counting-Lecture 1", id: "1ka9SG8zKmPtZXNpVRzOPOVGIDkOeCETh" },
+    { level: "Level 3", topic: "Topic 44: Counting", title: "Lec 90: Counting-Lecture 2", id: "1DS1OFzRRK7_WjoOW9HzG2mERg_M_VijD" },
+    { level: "Level 3", topic: "Topic 45: What's your ID?", title: "Lec 91: What's your ID? -Lecture 1", id: "1pw97hDoGum65j0lAshWiQXlNabxnwO8Y" },
+    { level: "Level 3", topic: "Topic 45: What's your ID?", title: "Lec 92: What's your ID? -Lecture 2", id: "1SCJQBy5DJPZfvO8KG1h5qmDwc-IW6FiU" },
+    { level: "Level 3", topic: "Topic 46: Dear Trigonometry", title: "Lec 93: Dear Trigonometry-Lecture 1", id: "1m-2JIZjmm3flmxu1PWj3gFoo0oMtHfCK" },
+    { level: "Level 3", topic: "Topic 46: Dear Trigonometry", title: "Lec 94: Dear Trigonometry-Lecture 2", id: "1egC9ZmQ_HdY3WjZ0KVfl5Pobk0F8IRmR" },
+    { level: "Level 3", topic: "Topic 47: Statistics", title: "Lec 95: Statistics-Lecture 1", id: "1Qoi7ZZt1GItlbQVT2Q7bueqavd4KHdDQ" },
+    { level: "Level 3", topic: "Topic 47: Statistics", title: "Lec 96: Statistics-Lecture 2", id: "1eeDw9LP6p3VzHkyJMsDehhgTTx1ryWBr" },
+    { level: "Level 3", topic: "Topic 48: A Jolly ride with modulo", title: "Lec 97: A Jolly ride with modulo-Lecture 1", id: "1odJE7ADRslZhSBGK7h78phdc-qK6xzYb" },
+    { level: "Level 3", topic: "Topic 48: A Jolly ride with modulo", title: "Lec 98: A Jolly ride with modulo-Lecture 2", id: "10UVJfNG5oQ-EFh-6bcYrJ1ZU0yILMxlU" },
+    { level: "Level 3", topic: "Topic 49: Setting up the ratio", title: "Lec 99: Setting up the ratio-Lecture 1", id: "1ndStT04-wNWnqn9rRzxIAZg7RG3CflUz" },
+    { level: "Level 3", topic: "Topic 49: Setting up the ratio", title: "Lec 100: Setting up the ratio-Lecture 2", id: "1XOEAvFv5nJmIsqp8DxmooroHIg_kabkK" },
+    { level: "Level 4", topic: "Topic 50: Level 4 Introduction", title: "Lec 101: Level 4 Introduction", id: "1EHfBKtBUmCHqCSgZ5WYf26ykdJWJj_Rr" },
+    { level: "Level 4", topic: "Topic 51: Chasing the Ratios", title: "Lec 102: Chasing the Ratios-Lecture 1", id: "1U-s0ryRmCcfuUG_spQ_fIAwLiThkN-vQ" },
+    { level: "Level 4", topic: "Topic 51: Chasing the Ratios", title: "Lec 103: Chasing the Ratios-Lecture 2", id: "1ngIkcOwIxdInM-DzZVuafFE084nmx7ZZ" },
+    { level: "Level 4", topic: "Topic 52: What's your Chance?", title: "Lec 104: What's your Chance? -Lecture 1", id: "1ky-OO-mflrM9qIYbiphHLimn5Xu2rBe8" },
+    { level: "Level 4", topic: "Topic 52: What's your Chance?", title: "Lec 105: What's your Chance? -Lecture 2", id: "1iGQpN5pHJdbVHtmYZzO-e-bQfi82Orc2" },
+    { level: "Level 4", topic: "Topic 53: Transformation Geometry", title: "Lec 106: Transformation Geometry-Lecture 1", id: "1ZOCgLo9tzWyoJmCi8rlPaf_hN1dA8A1U" },
+    { level: "Level 4", topic: "Topic 53: Transformation Geometry", title: "Lec 107: Transformation Geometry-Lecture 2", id: "1H0g4kD8sJVhPIItNWIrZkDp_5zUpa56i" },
+    { level: "Level 4", topic: "Topic 54: Graphman", title: "Lec 108: Graphman-Lecture 1", id: "1AH275DhWlJXVw0_el8ZNhu7RPbviIplZ" },
+    { level: "Level 4", topic: "Topic 54: Graphman", title: "Lec 109: Graphman-Lecture 2", id: "1AlXlCNDVGaQl4XayFQOrBpex0z3dru4n" },
+    { level: "Level 4", topic: "Topic 55: Coloring Maths", title: "Lec 110: Coloring Maths-Lecture 1", id: "1TDlm25r9hraUegobO7MgUZfmFwcpWrA6" },
+    { level: "Level 4", topic: "Topic 55: Coloring Maths", title: "Lec 111: Coloring Maths-Lecture 2", id: "13yPzaqtCLzc-8pLv98MfRksxe7za9-ol" },
+    { level: "Level 4", topic: "Topic 56: Friendly Trigonometry", title: "Lec 112: Friendly Trigonometry-Lecture 1", id: "1CjvTd25YCEnFjItcrGa5-BQgxGCrDq78" },
+    { level: "Level 4", topic: "Topic 56: Friendly Trigonometry", title: "Lec 113: Friendly Trigonometry-Lecture 2", id: "1yydnygbGoHXbzgk-zH_roKBOF7Wu94Rq" },
+    { level: "Level 4", topic: "Topic 56: Friendly Trigonometry", title: "Lec 114: Friendly Trigonometry-Lecture 3", id: "16iDOt1-ddB1FdXoddvgssa2UAtU-41-J" },
+    { level: "Level 4", topic: "Topic 57: The Art of Counting - 1", title: "Lec 115: The Art of Counting - 1-Lecture 1", id: "1x17qPFMOeXA-eGXYWoIIx1TzZhZl0JbD" },
+    { level: "Level 4", topic: "Topic 57: The Art of Counting - 1", title: "Lec 116: The Art of Counting - 1-Lecture 2", id: "1j3X5Dc4pduCQCiHi2ZnOa2ILoU0um5Da" },
+    { level: "Level 4", topic: "Topic 58: The Art of Counting - 2", title: "Lec 117: The Art of Counting - 2-Lecture 1", id: "1ICv1FyYOUyI1jw6_XfQOERwz_aOoLpk8" },
+    { level: "Level 4", topic: "Topic 58: The Art of Counting - 2", title: "Lec 118: The Art of Counting - 2-Lecture 2", id: "1myacb0Ko0-tw8Ote0reiiLdsjPX9xMcF" },
+    { level: "Level 4", topic: "Topic 59: Gate Way to Conic Caves", title: "Lec 119: Gate Way to Conic Caves-Lecture 1", id: "1rKYsDsdKBxZX7I0ciwXAHgDdRJzW2K5Q" },
+    { level: "Level 4", topic: "Topic 59: Gate Way to Conic Caves", title: "Lec 120: Gate Way to Conic Caves-Lecture 2", id: "1yUlLtalBKzAAnsDQKbXbwpI6nEXkTgSf" },
+    { level: "Level 4", topic: "Topic 60: Vector - The Powerful Arrow", title: "Lec 121: Vector - The Powerful Arrow-Lecture 1", id: "1ZvKzMfj01tpmY70gUpw9LBdeCI0jweai" },
+    { level: "Level 4", topic: "Topic 60: Vector - The Powerful Arrow", title: "Lec 122: Vector - The Powerful Arrow-Lecture 2", id: "1IEKk8fHHCoyKxS16QZN-StkQjeo4zSZd" },
+    { level: "Level 4", topic: "Topic 61: Travel with coordinates", title: "Lec 123: Travel with coordinates-Lecture 1", id: "1RWaulaDzIH8bmR6Lr41boh-pS36aTUX5" },
+    { level: "Level 4", topic: "Topic 61: Travel with coordinates", title: "Lec 124: Travel with coordinates-Lecture 2", id: "1uXSEA2RVycpQ202XQPn16O2AxToNCaAl" },
+    { level: "Level 4", topic: "Topic 62: Is it Possible?", title: "Lec 125: Is it Possible? -Lecture 1", id: "1Pnm40n8QUbMG45yZsvg5z3ikaaBLFYCE" },
+    { level: "Level 4", topic: "Topic 62: Is it Possible?", title: "Lec 126: Is it Possible? -Lecture 2", id: "1q9fHFaEc0Ymx-dGorjYqps8IWDW5eS0a" },
+    { level: "Level 4", topic: "Topic 63: Imagine the complex", title: "Lec 127: Imagine the complex-Lecture 1", id: "1labEFj1bE-DqDgq98nlhcMlfyRNI0bPJ" },
+    { level: "Level 4", topic: "Topic 63: Imagine the complex", title: "Lec 128: Imagine the complex-Lecture 2", id: "1jovbu9jz4L_P5MUfzimnmwxcU1t0WvCj" },
+    { level: "Level 4", topic: "Topic 64: Induction", title: "Lec 129: Induction -Lecture 1", id: "1eWHf2dCCEjbs500y2Tdmdonagev7oW85" },
+    { level: "Level 4", topic: "Topic 64: Induction", title: "Lec 130: Induction -Lecture 2", id: "1BmM91eAmfoOsOkYMDEg1dznYCpxCE2_B" },
+    { level: "Level 4", topic: "Topic 65: Dr Calculus", title: "Lec 131: Dr Calculus-Lecture 1", id: "1GdpLA6nE7dJVLGfjtbWcdrgWccAWhxgM" },
+    { level: "Level 4", topic: "Topic 65: Dr Calculus", title: "Lec 132: Dr Calculus-Lecture 2", id: "1KkrHP9Gkdd2NCi6v3Fu_sKRRlIor2sYd" },
+    { level: "Level 4", topic: "Topic 66: Playing the Series", title: "Lec 133: Playing the Series-Lecture 1", id: "11sC1thutU6TKkbBLuXypbxYBuxBRZhFl" },
+    { level: "Level 4", topic: "Topic 66: Playing the Series", title: "Lec 134: Playing the Series-Lecture 2", id: "15xNjN8M25NRROkJqYspDRRPqTTlqubdU" },
+    { level: "Level 4", topic: "Topic 67: Driving Algebra", title: "Lec 135: Driving Algebra-Lecture 1", id: "1-iUDcx5xgI74MZ8yLlpDdDSvecaYIZql" },
+    { level: "Level 4", topic: "Topic 67: Driving Algebra", title: "Lec 136: Driving Algebra-Lecture 2", id: "13qAqhP6e-hSnUDg8130EZh82tQzhsWrI" },
+    { level: "Level 4", topic: "Topic 68: Recursion", title: "Lec 137: Recursion-Lecture 1", id: "1gm-1MnxtJYriYndJwKl1-o_pGOeccdyh" },
+    { level: "Level 4", topic: "Topic 68: Recursion", title: "Lec 138: Recursion-Lecture 2", id: "1uavWQkals-SwQEZknNTFAg9ofKIO6nxt" },
+    { level: "Level 4", topic: "Topic 69: Collecting Special Numbers", title: "Lec 139: Collecting Special Numbers-Lecture 1", id: "1htlUjeZUP9vD-feM-0tg_dhJ3BoRY6GU" },
+    { level: "Level 4", topic: "Topic 69: Collecting Special Numbers", title: "Lec 140: Collecting Special Numbers-Lecture 2", id: "14wEMC4S6EKGv0ngRbs7XbY76GvKPZM8f" },
+    { level: "Level 4", topic: "Topic 70: Mixed Bag", title: "Lec 141: Mixed Bag-Lecture 1", id: "1dgPjrsDtOwIQa6ke7qph2jnaRelERmbn" },
+    { level: "Level 4", topic: "Topic 70: Mixed Bag", title: "Lec 142: Mixed Bag-Lecture 2", id: "17DC1z-wdPf1rIKIdhlXN9f-UbgdxOCFT" }
+];
+
+let watchedSet = new Set(JSON.parse(localStorage.getItem('mathPortalWatched')) || []);
+let currentVideoId = null;
+
+const levelSelect = document.getElementById('levelSelect');
+const lectureSelect = document.getElementById('lectureSelect');
+const videoBox = document.getElementById('videoBox');
+const mainPlayer = document.getElementById('mainPlayer');
+const logBox = document.getElementById('logBox');
+const metaTopic = document.getElementById('metaTopic');
+const metaTitle = document.getElementById('metaTitle');
+const btnWatched = document.getElementById('btnWatched');
+
+function logActivity(text) {
+    const timestamp = new Date().toLocaleTimeString();
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="log-time">[${timestamp}]</span> ${text}`;
+    if (logBox.innerText.includes("No activities recorded")) logBox.innerHTML = '';
+    logBox.insertBefore(entry, logBox.firstChild);
+}
+
+function updateProgressBars() {
+    const total = lectureData.length;
+    const watchedCount = watchedSet.size;
+    const totalPct = Math.round((watchedCount / total) * 100) || 0;
+    
+    document.getElementById('progressText').textContent = `Total Progress: ${watchedCount}/${total} Videos (${totalPct}%)`;
+    document.getElementById('progressBar').style.width = `${totalPct}%`;
+
+    const selectedLevel = levelSelect.value;
+    if(selectedLevel) {
+        const lvlLectures = lectureData.filter(item => item.level === selectedLevel);
+        const lvlWatched = lvlLectures.filter(item => watchedSet.has(item.id)).length;
+        const lvlPct = Math.round((lvlWatched / lvlLectures.length) * 100) || 0;
+        document.getElementById('levelProgressText').textContent = `${selectedLevel}: ${lvlWatched}/${lvlLectures.length} (${lvlPct}%)`;
+    } else {
+        document.getElementById('levelProgressText').textContent = 'Level Progress: --';
+    }
+}
+
+// Populate level dropdown
+const uniqueLevels = [...new Set(lectureData.map(item => item.level))];
+uniqueLevels.forEach(lvl => {
+    let opt = document.createElement('option');
+    opt.value = lvl;
+    opt.textContent = lvl;
+    levelSelect.appendChild(opt);
+});
+
+levelSelect.addEventListener('change', function() {
+    lectureSelect.innerHTML = '<option value="">-- Select a Lecture --</option>';
+    videoBox.style.display = 'none';
+    mainPlayer.pause();
+    
+    if(!this.value) {
+        lectureSelect.disabled = true;
+        updateProgressBars();
+        return;
+    }
+    
+    const filtered = lectureData.filter(item => item.level === this.value);
+    filtered.forEach(lec => {
+        let opt = document.createElement('option');
+        opt.value = `https://docs.google.com/uc?export=download&id=${lec.id}`;
+        opt.textContent = (watchedSet.has(lec.id) ? '✓ ' : '○ ') + lec.title;
+        opt.setAttribute('data-id', lec.id);
+        opt.setAttribute('data-topic', lec.topic);
+        opt.setAttribute('data-title', lec.title);
+        if(watchedSet.has(lec.id)) opt.classList.add('watched-opt');
+        lectureSelect.appendChild(opt);
+    });
+    
+    lectureSelect.disabled = false;
+    updateProgressBars();
+});
+
+lectureSelect.addEventListener('change', function() {
+    if(!this.value) {
+        videoBox.style.display = 'none';
+        mainPlayer.pause();
+        currentVideoId = null;
+        return;
+    }
+    
+    const sel = lectureSelect.options[lectureSelect.selectedIndex];
+    currentVideoId = sel.getAttribute('data-id');
+    metaTopic.textContent = sel.getAttribute('data-topic');
+    metaTitle.textContent = sel.getAttribute('data-title');
+    
+    mainPlayer.src = this.value;
+    videoBox.style.display = 'block';
+    mainPlayer.load();
+    
+    logActivity(`Started playing: <strong>${sel.getAttribute('data-title')}</strong>`);
+});
+
+btnWatched.addEventListener('click', function() {
+    if(!currentVideoId) return;
+    
+    const sel = lectureSelect.options[lectureSelect.selectedIndex];
+    const lectureTitle = sel.getAttribute('data-title');
+    
+    if(watchedSet.has(currentVideoId)) {
+        watchedSet.delete(currentVideoId);
+        sel.textContent = '○ ' + lectureTitle;
+        sel.classList.remove('watched-opt');
+        logActivity(`Marked incomplete: <strong>${lectureTitle}</strong>`);
+    } else {
+        watchedSet.add(currentVideoId);
+        sel.textContent = '✓ ' + lectureTitle;
+        sel.classList.add('watched-opt');
+        logActivity(`Completed video: <strong>${lectureTitle}</strong>`);
+    }
+    
+    localStorage.setItem('mathPortalWatched', JSON.stringify([...watchedSet]));
+    updateProgressBars();
+});
+
+// Auto track continuous complete triggers
+mainPlayer.addEventListener('ended', function() {
+    if(currentVideoId && !watchedSet.has(currentVideoId)) {
+        btnWatched.click();
+    }
+});
+
+updateProgressBars();
+</script>
+</body>
+</html>
